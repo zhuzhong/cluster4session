@@ -33,7 +33,7 @@ spring.xml
 
 
 ```xml
-<bean id="globalSessionFilter" class="com.zz.globalsession.filter.support.RedisSessionFilter" init-method="initSettings" >
+	<bean id="globalSessionFilter" class="com.zz.globalsession.filter.support.RedisSessionFilter" init-method="initSettings" >
 		<property name="jedisPool" ref="jedisPool" />
 <!-- 		<property name="sessionId" value="redisSessionId" /> cookie名字 -->
 		<property name="domain" value="test.zz.com" />
