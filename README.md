@@ -1,6 +1,6 @@
 ## clustersession
 
-这个工程是在global-session-filter上更改而成，但是不依赖于它。
+这个工程是在global-session-filter https://github.com/m3dev/global-session-filter 上更改而成，但是不依赖于它。
 
 更改的主要目的是为了应用spring DelegatingFilterProxy
 集成，并进行配置分离，且后台的存储器更换成redis.
