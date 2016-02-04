@@ -18,11 +18,11 @@ import com.zz.globalsession.serial.Serializer;
  */
 public class JdkSerializer implements Serializer {
 
-    
-    private static final Log log=LogFactory.getLog(JdkSerializer.class);
+    private static final Log log = LogFactory.getLog(JdkSerializer.class);
+
     @Override
     public <T> byte[] serialize(T t) {
-      
+
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos;
@@ -30,36 +30,36 @@ public class JdkSerializer implements Serializer {
             oos.writeObject(t);
             return baos.toByteArray();
         } catch (IOException e) {
-            
+
             log.error(e);
             e.printStackTrace();
             return null;
         }
-        //return null;
+        // return null;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T deserialize(byte[] bytes)  {
-       
+    public <T> T deserialize(byte[] bytes) {
+
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
             ObjectInputStream bis;
             bis = new ObjectInputStream(bais);
             return (T) bis.readObject();
         } catch (IOException e) {
-            
+
             log.error(e);
             e.printStackTrace();
             return null;
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
-            
+
             log.error(e);
             e.printStackTrace();
             return null;
         }
-        //return null;
+        // return null;
     }
 
 }

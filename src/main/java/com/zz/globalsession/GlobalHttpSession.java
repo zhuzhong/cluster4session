@@ -99,14 +99,14 @@ public class GlobalHttpSession implements HttpSession {
     public boolean isValid() {
 
         Metadata metadata = store.get(keyGenerator.generate(METADATA_KEY));
-        boolean isNotInvalidated = metadata != null &&
-                metadata.getInvalidated() != null &&
-                metadata.getInvalidated() == false;
+        boolean isNotInvalidated = metadata != null && metadata.getInvalidated() != null
+                && metadata.getInvalidated() == false;
 
         boolean isNotExpired = store.get(keyGenerator.generate(ATTRIBUTES_KEY)) != null;
 
         if (log.isDebugEnabled()) {
-            log.debug("isValid is called. (isNotInvalidated: " + isNotInvalidated + ", isNotExpired: " + isNotExpired + ")");
+            log.debug("isValid is called. (isNotInvalidated: " + isNotInvalidated + ", isNotExpired: " + isNotExpired
+                    + ")");
         }
 
         return isNotInvalidated && isNotExpired;
@@ -137,7 +137,8 @@ public class GlobalHttpSession implements HttpSession {
         }
     }
 
-    public GlobalHttpSession(String sessionId, SessionStore store, String namespace, Integer timeoutMinutes, HttpSession session) {
+    public GlobalHttpSession(String sessionId, SessionStore store, String namespace, Integer timeoutMinutes,
+            HttpSession session) {
 
         if (sessionId == null || sessionId.trim().length() == 0) {
             throw new IllegalArgumentException("sessionId should not be empty.");
@@ -174,7 +175,8 @@ public class GlobalHttpSession implements HttpSession {
         reloadAttributes();
 
         if (log.isDebugEnabled()) {
-            log.debug("A new GlobalHttpSession is created. (sessionId: " + sessionId + ", attributes: " + attributes + ")");
+            log.debug("A new GlobalHttpSession is created. (sessionId: " + sessionId + ", attributes: " + attributes
+                    + ")");
         }
     }
 
@@ -271,7 +273,7 @@ public class GlobalHttpSession implements HttpSession {
     @Override
     public String[] getValueNames() {
         Enumeration<String> names = (Enumeration<String>) getAttributeNames();
-        return Collections.list(names).toArray(new String[]{});
+        return Collections.list(names).toArray(new String[] {});
     }
 
     @Override
@@ -335,7 +337,6 @@ public class GlobalHttpSession implements HttpSession {
         session.setMaxInactiveInterval(interval);
     }
 
-
     private void saveAttributesToStore() {
         store.set(keyGenerator.generate(ATTRIBUTES_KEY), getMaxInactiveInterval(), toMap());
     }
@@ -352,9 +353,9 @@ public class GlobalHttpSession implements HttpSession {
             attributes.append(",");
         }
         return "com.m3.globalsession.GlobalHttpSession(id: " + getId() + ", attributes: ["
-                + attributes.toString().replaceFirst(",$", "")
-                + "], creationTime: " + getCreationTime() + ", lastAccessedTime: " + getLastAccessedTime()
-                + ", maxInactiveInterval: " + getMaxInactiveInterval() + ")";
+                + attributes.toString().replaceFirst(",$", "") + "], creationTime: " + getCreationTime()
+                + ", lastAccessedTime: " + getLastAccessedTime() + ", maxInactiveInterval: " + getMaxInactiveInterval()
+                + ")";
     }
 
 }

@@ -28,8 +28,8 @@ public class GlobalSessionHttpRequest extends HttpServletRequestWrapper {
     private final SessionStore store;
     private final GlobalHttpSession session;
 
-    public GlobalSessionHttpRequest(ServletRequest request, String sessionId, String namespace,
-                                    Integer timeoutMinutes, SessionStore store) {
+    public GlobalSessionHttpRequest(ServletRequest request, String sessionId, String namespace, Integer timeoutMinutes,
+            SessionStore store) {
         super((HttpServletRequest) request);
         this.sessionId = sessionId;
         this.namespace = namespace;

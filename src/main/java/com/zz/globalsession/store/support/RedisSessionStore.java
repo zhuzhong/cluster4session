@@ -17,14 +17,14 @@ import com.zz.globalsession.store.SessionStore;
  */
 public class RedisSessionStore implements SessionStore {
 
-    private static Log       log = LogFactory.getLog(RedisSessionStore.class);
+    private static Log log = LogFactory.getLog(RedisSessionStore.class);
 
-    private final JedisPool  jedisPool;
+    private final JedisPool jedisPool;
     private final Serializer serializer;
 
-    public RedisSessionStore(JedisPool jedisPool,Serializer serializer){
+    public RedisSessionStore(JedisPool jedisPool, Serializer serializer) {
         this.jedisPool = jedisPool;
-        this.serializer=serializer;
+        this.serializer = serializer;
     }
 
     private String getMethodCalls(Throwable t) {
@@ -32,7 +32,7 @@ public class RedisSessionStore implements SessionStore {
         StackTraceElement e2 = t.getStackTrace()[2];
         StackTraceElement e3 = t.getStackTrace()[3];
         return "(" + e1.getClassName() + "#" + e1.getMethodName() + " <- " + e2.getClassName() + "#"
-               + e2.getMethodName() + " <- " + e3.getClassName() + "#" + e3.getMethodName() + ")";
+                + e2.getMethodName() + " <- " + e3.getClassName() + "#" + e3.getMethodName() + ")";
     }
 
     @Override

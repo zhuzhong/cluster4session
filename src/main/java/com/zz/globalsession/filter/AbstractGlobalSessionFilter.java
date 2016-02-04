@@ -36,91 +36,94 @@ import com.zz.globalsession.GlobalSessionHttpRequest;
 import com.zz.globalsession.store.SessionStore;
 import com.zz.globalsession.util.CookieUtil;
 
-public abstract class AbstractGlobalSessionFilter implements Filter{
+public abstract class AbstractGlobalSessionFilter implements Filter {
 
-    private static Log          log                     = LogFactory.getLog(AbstractGlobalSessionFilter.class);
+    private static Log log = LogFactory.getLog(AbstractGlobalSessionFilter.class);
 
-    private static final String GLOBAL_NAMESPACE        = "GLOBAL";
+    private static final String GLOBAL_NAMESPACE = "GLOBAL";
     private static final String DEFAULT_SESSION_ID_NAME = "__gsid__";
 
-/*    private static class ConfigKey {
-
-        public static final String NAMESPACE       = "namespace";
-        public static final String SESSION_ID      = "sessionId";
-        public static final String DOMAIN          = "domain";
-        public static final String PATH            = "path";
-        public static final String SECURE          = "secure";
-        public static final String HTTP_ONLY       = "httpOnly";
-        public static final String SESSION_TIMEOUT = "sessionTimeout";
-        public static final String EXCLUDE_REG_EXP = "excludeRegExp";
-    }*/
+    /*
+     * private static class ConfigKey {
+     * 
+     * public static final String NAMESPACE = "namespace"; public static final
+     * String SESSION_ID = "sessionId"; public static final String DOMAIN =
+     * "domain"; public static final String PATH = "path"; public static final
+     * String SECURE = "secure"; public static final String HTTP_ONLY =
+     * "httpOnly"; public static final String SESSION_TIMEOUT =
+     * "sessionTimeout"; public static final String EXCLUDE_REG_EXP =
+     * "excludeRegExp"; }
+     */
 
     private static class RequestAttributeKey {
 
         protected static final String SESSION_STATUS = "__sessionStatus__";
     }
 
-   private static enum SessionStatus {
+    private static enum SessionStatus {
         unknown, fixed
     }
 
-    protected SessionStore                store;
+    protected SessionStore store;
     protected GlobalSessionFilterSettings settings;
 
-//    private GlobalSessionFilterSettings getGlobalSessionFilterSettings(FilterConfig config) {
-//
-//        GlobalSessionFilterSettings settings = new GlobalSessionFilterSettings();
-//
-//        settings.setNamespace(getConfigValue(config, ConfigKey.NAMESPACE));
-//        if (settings.getNamespace() == null) {
-//            settings.setNamespace(GLOBAL_NAMESPACE);
-//        }
-//
-//        settings.setExcludeRegExp(getConfigValue(config, ConfigKey.EXCLUDE_REG_EXP));
-//
-//        settings.setSessionIdKey(getConfigValue(config, ConfigKey.SESSION_ID));
-//        if (settings.getSessionIdKey() == null) {
-//            settings.setSessionIdKey(DEFAULT_SESSION_ID_NAME);
-//        }
-//
-//        settings.setDomain(getConfigValue(config, ConfigKey.DOMAIN));
-//
-//        settings.setPath(getConfigValue(config, ConfigKey.PATH));
-//        if (settings.getPath() == null) {
-//            settings.setPath("/");
-//        }
-//
-//        settings.setSecure(getConfigValue(config, ConfigKey.SECURE) != null
-//                           && getConfigValue(config, ConfigKey.SECURE).equals("true"));
-//
-//        settings.setHttpOnly(getConfigValue(config, ConfigKey.HTTP_ONLY) != null
-//                             && getConfigValue(config, ConfigKey.HTTP_ONLY).equals("true"));
-//
-//        String sessionTimeout = getConfigValue(config, ConfigKey.SESSION_TIMEOUT);
-//        if (sessionTimeout == null) {
-//            settings.setSessionTimeoutMinutes(10);
-//        } else {
-//            settings.setSessionTimeoutMinutes(Integer.valueOf(sessionTimeout));
-//        }
-//
-//        return settings;
-//    }
+    // private GlobalSessionFilterSettings
+    // getGlobalSessionFilterSettings(FilterConfig config) {
+    //
+    // GlobalSessionFilterSettings settings = new GlobalSessionFilterSettings();
+    //
+    // settings.setNamespace(getConfigValue(config, ConfigKey.NAMESPACE));
+    // if (settings.getNamespace() == null) {
+    // settings.setNamespace(GLOBAL_NAMESPACE);
+    // }
+    //
+    // settings.setExcludeRegExp(getConfigValue(config,
+    // ConfigKey.EXCLUDE_REG_EXP));
+    //
+    // settings.setSessionIdKey(getConfigValue(config, ConfigKey.SESSION_ID));
+    // if (settings.getSessionIdKey() == null) {
+    // settings.setSessionIdKey(DEFAULT_SESSION_ID_NAME);
+    // }
+    //
+    // settings.setDomain(getConfigValue(config, ConfigKey.DOMAIN));
+    //
+    // settings.setPath(getConfigValue(config, ConfigKey.PATH));
+    // if (settings.getPath() == null) {
+    // settings.setPath("/");
+    // }
+    //
+    // settings.setSecure(getConfigValue(config, ConfigKey.SECURE) != null
+    // && getConfigValue(config, ConfigKey.SECURE).equals("true"));
+    //
+    // settings.setHttpOnly(getConfigValue(config, ConfigKey.HTTP_ONLY) != null
+    // && getConfigValue(config, ConfigKey.HTTP_ONLY).equals("true"));
+    //
+    // String sessionTimeout = getConfigValue(config,
+    // ConfigKey.SESSION_TIMEOUT);
+    // if (sessionTimeout == null) {
+    // settings.setSessionTimeoutMinutes(10);
+    // } else {
+    // settings.setSessionTimeoutMinutes(Integer.valueOf(sessionTimeout));
+    // }
+    //
+    // return settings;
+    // }
 
     private Cookie getCurrentValidSessionIdCookie(HttpServletRequest req) {
         if (req.getCookies() != null) {
             for (Cookie cookie : req.getCookies()) {
                 if (cookie.getName().equals(settings.getSessionIdKey()) && cookie.getValue() != null
-                    && cookie.getValue().trim().length() > 0) {
+                        && cookie.getValue().trim().length() > 0) {
                     if (isValidSession(createGlobalSessionRequest(req, cookie.getValue()))) {
                         if (log.isDebugEnabled()) {
                             log.debug("SessionId cookie is found. (" + settings.getSessionIdKey() + " -> "
-                                      + cookie.getValue() + ")");
+                                    + cookie.getValue() + ")");
                         }
                         return cookie;
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("SessionId cookie is found but it's invalid. (" + settings.getSessionIdKey()
-                                      + " -> " + cookie.getValue() + ")");
+                                    + " -> " + cookie.getValue() + ")");
                         }
                         continue;
                     }
@@ -144,19 +147,16 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
         } else {
             sessionIdCookie.setPath("/");
         }
-        if(settings.isSecure())
-        sessionIdCookie.setSecure(settings.isSecure());
+        if (settings.isSecure())
+            sessionIdCookie.setSecure(settings.isSecure());
         // [Note] httpOnly is not supported by Servlet API 2.x, so add it
         // manually later.
         return sessionIdCookie;
     }
 
     private GlobalSessionHttpRequest createGlobalSessionRequest(HttpServletRequest req, String sessionIdValue) {
-        return new GlobalSessionHttpRequest(req,
-            sessionIdValue,
-            settings.getNamespace(),
-            settings.getSessionTimeoutMinutes(),
-            store);
+        return new GlobalSessionHttpRequest(req, sessionIdValue, settings.getNamespace(),
+                settings.getSessionTimeoutMinutes(), store);
     }
 
     @Override
@@ -164,9 +164,8 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
 
     }
 
-
-    public void initSettings(){
-    	if (settings == null) {
+    public void initSettings() {
+        if (settings == null) {
             settings = new GlobalSessionFilterSettings();
         }
         // 以下内空为新增的，目的为了利用DelegatingFilterProxy 配置filter
@@ -174,13 +173,13 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
         // namespace,sessionId,domain,path,secure,httpOnly,sessiontTimeout,excludeRegExp;
         if (namespace != null) {
             settings.setNamespace(namespace);
-        }else{
-        	settings.setNamespace(GLOBAL_NAMESPACE);
+        } else {
+            settings.setNamespace(GLOBAL_NAMESPACE);
         }
         if (sessionId != null) {
             settings.setSessionIdKey(sessionId);
-        }else{
-        	settings.setSessionIdKey(DEFAULT_SESSION_ID_NAME);
+        } else {
+            settings.setSessionIdKey(DEFAULT_SESSION_ID_NAME);
         }
         if (domain != null) {
             settings.setDomain(domain);
@@ -201,9 +200,10 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
             settings.setSecure(secure);
         }
     }
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
-                                                                                    ServletException {
+            ServletException {
 
         HttpServletRequest _req = (HttpServletRequest) req;
         HttpServletResponse _res = (HttpServletResponse) res;
@@ -242,10 +242,10 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
                 /*  */
                 String setCookie = CookieUtil.createSetCookieHeaderValue(newSessionIdCookie, settings.isHttpOnly());
                 _res.addHeader("Set-Cookie", setCookie);
-               
-               // _res.addCookie(newSessionIdCookie);
+
+                // _res.addCookie(newSessionIdCookie);
                 setSessionStatus(_req, SessionStatus.fixed);
-           
+
                 if (log.isDebugEnabled()) {
                     log.debug("SessionId cookie is updated. (" + sessionIdValue + ")");
                 }
@@ -302,13 +302,14 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
     // 新增属性
     private String namespace, sessionId, domain, path;
     private boolean httpOnly, secure;
-    private int     sessiontTimeout;
-    private String  excludeRegExp;
+    private int sessiontTimeout;
+    private String excludeRegExp;
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-// cookie name 
+
+    // cookie name
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
@@ -336,10 +337,5 @@ public abstract class AbstractGlobalSessionFilter implements Filter{
     public void setExcludeRegExp(String excludeRegExp) {
         this.excludeRegExp = excludeRegExp;
     }
-
-    
- 
-    
-   
 
 }

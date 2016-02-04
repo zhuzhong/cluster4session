@@ -1,10 +1,22 @@
 ## clustersession
 
-这个工程是在global-session-filter https://github.com/m3dev/global-session-filter 上更改而成，但是不依赖于它。
+这个工程是在global-session-filter上更改而成，但是不依赖于它。
 
 更改的主要目的是为了应用spring DelegatingFilterProxy
-集成，并进行配置分离，且session的存储器更换成redis.
+集成，并进行配置分离，且后台的存储器更换成redis.
 增加序列化接口，去掉了原始的对于memcached 代理工程的依赖.
+
+主要解决的问题是web容器session共享的问题，主要作的改进利作redis作为session共享的容器.
+对于session共享这个问题解决方案，修改tomcat容器已的相当成熟的组件memcached-session-manager 现在线上应用的就是这个；
+redis-session-manager，它们的共同特点都更改tomcat的配置，在这一层作拦截，即给tomcat增加Valve.缺点，就
+是需要更改tomcat的权限，它是容器级的更改，而非应用级的.
+
+
+对于应用级的更改，spring也提供了spring-session类似的项目，但是我试了一下不太好用。
+
+clustersession，即提供的功能为应用级的，即引入相应的jar包，配置相应的filter.
+
+
 
 
 ### 配置示例:
@@ -63,6 +75,6 @@ spring.xml
 		<constructor-arg index="2" value="6389" />
 	</bean>
 ```	
-目前还没有完整的测试用例
+
 	
 	

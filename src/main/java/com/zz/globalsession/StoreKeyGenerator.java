@@ -24,7 +24,9 @@ public class StoreKeyGenerator {
         this.sessionId = sessionId;
         this.namespace = namespace;
     }
-    /*生成这样一个key GlobalSession::XXXXXXXXXXXXXXX::GLOBAL::memberId
+
+    /*
+     * 生成这样一个key GlobalSession::XXXXXXXXXXXXXXX::GLOBAL::memberId
      * 为了让后台能够共享session，所以必须将namespace设为一样的，或者采用默认值,
      * namespace用来区分不同子系统之间共用同一个sessionStore时的互相干扰
      */
