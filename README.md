@@ -1,5 +1,6 @@
-## clustersession
+## cluster4session
 
+利用redis进行session的集中存储，以实现应用的无状态化。
 这个工程是在global-session-filter上更改而成，但是不依赖于它。
 
 更改的主要目的是为了应用spring DelegatingFilterProxy
