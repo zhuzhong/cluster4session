@@ -32,10 +32,19 @@ import org.apache.commons.logging.LogFactory;
 import com.zz.globalsession.store.SessionStore;
 
 @SuppressWarnings("deprecation")
-public class GlobalHttpSession implements HttpSession {
+public class GlobalHttpSession implements HttpSession, Serializable {
+
+    /**
+	 * 
+	 */
+    private static final long serialVersionUID = 5616815033390576552L;
 
     public static class Metadata implements Serializable {
 
+        /**
+		 * 
+		 */
+        private static final long serialVersionUID = 6871964879197158756L;
         private Boolean invalidated;
         private Date creationTime;
         private Date lastAccessedTime;
@@ -69,7 +78,7 @@ public class GlobalHttpSession implements HttpSession {
 
         @Override
         public String toString() {
-            return "com.m3.globalsession.GlobalHttpSession$Metadata(invalidated: " + getInvalidated()
+            return "com.zz.globalsession.GlobalHttpSession$Metadata(invalidated: " + getInvalidated()
                     + ", creationTime: " + getCreationTime() + ", lastAccessedTime: " + getLastAccessedTime() + ")";
         }
 
@@ -342,6 +351,9 @@ public class GlobalHttpSession implements HttpSession {
     }
 
     private void removeAttributesFromStore() {
+        
+        //这两部分都清理掉
+        store.remove(keyGenerator.generate(METADATA_KEY));      
         store.remove(keyGenerator.generate(ATTRIBUTES_KEY));
     }
 
@@ -352,7 +364,7 @@ public class GlobalHttpSession implements HttpSession {
             attributes.append(attr);
             attributes.append(",");
         }
-        return "com.m3.globalsession.GlobalHttpSession(id: " + getId() + ", attributes: ["
+        return "com.zz.globalsession.GlobalHttpSession(id: " + getId() + ", attributes: ["
                 + attributes.toString().replaceFirst(",$", "") + "], creationTime: " + getCreationTime()
                 + ", lastAccessedTime: " + getLastAccessedTime() + ", maxInactiveInterval: " + getMaxInactiveInterval()
                 + ")";

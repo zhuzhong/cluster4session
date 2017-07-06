@@ -15,23 +15,29 @@
  */
 package com.zz.globalsession;
 
-public class StoreKeyGenerator {
+import java.io.Serializable;
 
-    private final String sessionId;
-    private final String namespace;
+public class StoreKeyGenerator implements Serializable {
 
-    public StoreKeyGenerator(String sessionId, String namespace) {
-        this.sessionId = sessionId;
-        this.namespace = namespace;
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4429902653812976701L;
+	private final String sessionId;
+	private final String namespace;
 
-    /*
-     * 生成这样一个key GlobalSession::XXXXXXXXXXXXXXX::GLOBAL::memberId
-     * 为了让后台能够共享session，所以必须将namespace设为一样的，或者采用默认值,
-     * namespace用来区分不同子系统之间共用同一个sessionStore时的互相干扰
-     */
-    public String generate(String name) {
-        return "GlobalSession::" + sessionId + "::" + namespace + "::" + name;
-    }
+	public StoreKeyGenerator(String sessionId, String namespace) {
+		this.sessionId = sessionId;
+		this.namespace = namespace;
+	}
+
+	/*
+	 * 生成这样一个key GlobalSession::XXXXXXXXXXXXXXX::GLOBAL::memberId
+	 * 为了让后台能够共享session，所以必须将namespace设为一样的，或者采用默认值,
+	 * namespace用来区分不同子系统之间共用同一个sessionStore时的互相干扰
+	 */
+	public String generate(String name) {
+		return "GlobalSession::" + sessionId + "::" + namespace + "::" + name;
+	}
 
 }

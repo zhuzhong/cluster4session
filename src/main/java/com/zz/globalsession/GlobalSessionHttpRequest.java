@@ -23,17 +23,17 @@ import com.zz.globalsession.store.SessionStore;
 
 public class GlobalSessionHttpRequest extends HttpServletRequestWrapper {
 
-    private final String sessionId;
+/*    private final String sessionId;
     private final String namespace;
-    private final SessionStore store;
+    private final SessionStore store;*/
     private final GlobalHttpSession session;
 
     public GlobalSessionHttpRequest(ServletRequest request, String sessionId, String namespace, Integer timeoutMinutes,
             SessionStore store) {
         super((HttpServletRequest) request);
-        this.sessionId = sessionId;
+        /*this.sessionId = sessionId;
         this.namespace = namespace;
-        this.store = store;
+        this.store = store;*/
         session = new GlobalHttpSession(sessionId, store, namespace, timeoutMinutes, super.getSession());
     }
 

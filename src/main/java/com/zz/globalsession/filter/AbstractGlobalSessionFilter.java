@@ -41,7 +41,7 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
     private static Log log = LogFactory.getLog(AbstractGlobalSessionFilter.class);
 
     private static final String GLOBAL_NAMESPACE = "GLOBAL";
-    private static final String DEFAULT_SESSION_ID_NAME = "__gsid__";
+    private static final String DEFAULT_COOKIE_NAME = "__gsid__";
 
     /*
      * private static class ConfigKey {
@@ -109,20 +109,20 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
     // return settings;
     // }
 
-    private Cookie getCurrentValidSessionIdCookie(HttpServletRequest req) {
+    private Cookie getCurrentCookie4ValidSessionId(HttpServletRequest req) {
         if (req.getCookies() != null) {
             for (Cookie cookie : req.getCookies()) {
-                if (cookie.getName().equals(settings.getSessionIdKey()) && cookie.getValue() != null
+                if (cookie.getName().equals(settings.getCookieNameKey()) && cookie.getValue() != null
                         && cookie.getValue().trim().length() > 0) {
                     if (isValidSession(createGlobalSessionRequest(req, cookie.getValue()))) {
                         if (log.isDebugEnabled()) {
-                            log.debug("SessionId cookie is found. (" + settings.getSessionIdKey() + " -> "
+                            log.debug("SessionId cookie is found. (" + settings.getCookieNameKey() + " -> "
                                     + cookie.getValue() + ")");
                         }
                         return cookie;
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("SessionId cookie is found but it's invalid. (" + settings.getSessionIdKey()
+                            log.debug("SessionId cookie is found but it's invalid. (" + settings.getCookieNameKey()
                                     + " -> " + cookie.getValue() + ")");
                         }
                         continue;
@@ -136,9 +136,9 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
         return null;
     }
 
-    private Cookie generateSessionIdCookie(String sessionIdValue) {
+    private Cookie generateCookieBySessionId(String sessionId) {
 
-        Cookie sessionIdCookie = new Cookie(settings.getSessionIdKey(), sessionIdValue);
+        Cookie sessionIdCookie = new Cookie(settings.getCookieNameKey(), sessionId);
         if (settings.getDomain() != null) {
             sessionIdCookie.setDomain(settings.getDomain());
         }
@@ -176,16 +176,16 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
         } else {
             settings.setNamespace(GLOBAL_NAMESPACE);
         }
-        if (sessionId != null) {
-            settings.setSessionIdKey(sessionId);
+        if (cookieName != null) {
+            settings.setCookieNameKey(cookieName);
         } else {
-            settings.setSessionIdKey(DEFAULT_SESSION_ID_NAME);
+            settings.setCookieNameKey(DEFAULT_COOKIE_NAME);
         }
         if (domain != null) {
             settings.setDomain(domain);
         }
-        if (path != null) {
-            settings.setPath(path);
+        if (cookiePath != null) {
+            settings.setPath(cookiePath);
         }
         if (excludeRegExp != null) {
             settings.setExcludeRegExp(excludeRegExp);
@@ -224,7 +224,7 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
 
         } else {
 
-            Cookie currentValidSessionIdCookie = getCurrentValidSessionIdCookie(_req);
+            Cookie currentValidSessionIdCookie = getCurrentCookie4ValidSessionId(_req);
 
             String sessionIdValue = null;
             if (currentValidSessionIdCookie == null) {
@@ -236,11 +236,11 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
             }
 
             if (currentValidSessionIdCookie == null) {
-                Cookie newSessionIdCookie = generateSessionIdCookie(sessionIdValue);
+                Cookie cookieOfthisSessionId = generateCookieBySessionId(sessionIdValue);
                 // [Note] httpOnly is not supported by Servlet API 2.x, so need
                 // to call #addHeader instead of #addCookie
                 /*  */
-                String setCookie = CookieUtil.createSetCookieHeaderValue(newSessionIdCookie, settings.isHttpOnly());
+                String setCookie = CookieUtil.createSetCookieHeaderValue(cookieOfthisSessionId, settings.isHttpOnly());
                 _res.addHeader("Set-Cookie", setCookie);
 
                 // _res.addCookie(newSessionIdCookie);
@@ -300,33 +300,43 @@ public abstract class AbstractGlobalSessionFilter implements Filter {
     }
 
     // 新增属性
-    private String namespace, sessionId, domain, path;
+    private String namespace,  domain;
+    private String cookiePath;//, path;
     private boolean httpOnly, secure;
     private int sessiontTimeout;
     private String excludeRegExp;
+    
+    private String cookieName;//sessionId,
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
     // cookie name
-    public void setSessionId(String sessionId) {
+    /*public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
-    }
+    }*/
 
+    public void setCookieName(String cookieName){
+    	this.cookieName=cookieName;
+    }
     public void setDomain(String domain) {
         this.domain = domain;
     }
 
-    public void setPath(String path) {
+    /*public void setPath(String path) {
         this.path = path;
-    }
+    }*/
 
     public void setHttpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;
     }
 
-    public void setSecure(boolean secure) {
+    public void setCookiePath(String cookiePath) {
+		this.cookiePath = cookiePath;
+	}
+
+	public void setSecure(boolean secure) {
         this.secure = secure;
     }
 

@@ -1,4 +1,6 @@
-## cluster4session
+# cluster4session
+
+##功能简介
 
 利用redis进行session的集中存储，以实现应用的无状态化。
 这个工程是在global-session-filter上更改而成，但是不依赖于它。
@@ -13,44 +15,44 @@ redis-session-manager，它们的共同特点都更改tomcat的配置，在这�
 是需要更改tomcat的权限，它是容器级的更改，而非应用级的.
 
 
-对于应用级的更改，spring也提供了spring-session类似的项目，但是我试了一下不太好用。
-
-clustersession，即提供的功能为应用级的，即引入相应的jar包，配置相应的filter.
 
 
+cluster4session，即提供的功能为应用级的，即引入相应的jar包，配置相应的filter.
 
 
-### 配置示例:
-
-web.xml
-
-```xml
-<filter>
-	<filter-name>GlobalSessionFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	<init-param>
-		<param-name>targetBeanName</param-name>
-		<param-value>globalSessionFilter</param-value>
-	</init-param>
-</filter>
-
-<filter-mapping>
-    <filter-name>GlobalSessionFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
-</filter-mapping>
-```
 
 
-spring.xml
+## 配置示例:
+
+###web.xml
 
 
-```xml
+	<filter>
+		<filter-name>GlobalSessionFilter</filter-name>
+			<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetBeanName</param-name>
+			<param-value>globalSessionFilter</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+	    <filter-name>GlobalSessionFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	    <dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
+
+
+
+###spring.xml
+
+
+
 	<bean id="globalSessionFilter" class="com.zz.globalsession.filter.support.RedisSessionFilter" init-method="initSettings" >
 		<property name="jedisPool" ref="jedisPool" />
-<!-- 		<property name="sessionId" value="redisSessionId" /> cookie名字 -->
+	<!-- 		<property name="cookieName" value="cookieSessionId" /> cookie名字 -->
 		<property name="domain" value="test.zz.com" />
-<!-- 		<property name="path" value="/databatchweb" />  -->
+	<!-- 		<property name="cookiePath" value="/databatchweb" />  -->
 		<property name="secure" value="false" /> <!-- 只有https 才可以设为true-->
 		<property name="httpOnly" value="true" />
 		<property name="sessiontTimeout" value="30" /> <!-- 单位分钟 -->
@@ -75,7 +77,7 @@ spring.xml
 		<constructor-arg index="1" value="***" />
 		<constructor-arg index="2" value="6389" />
 	</bean>
-```	
+
 
 	
 	

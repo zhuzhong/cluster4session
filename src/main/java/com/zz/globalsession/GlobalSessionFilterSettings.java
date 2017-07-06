@@ -20,7 +20,8 @@ public class GlobalSessionFilterSettings {
     private String namespace;
     private String excludeRegExp;
 
-    private String sessionIdKey;
+    //private String sessionIdKey;
+    private String cookieNameKey;
     private String domain;
     private String path;
     private boolean secure;
@@ -44,13 +45,13 @@ public class GlobalSessionFilterSettings {
         this.excludeRegExp = excludeRegExp;
     }
 
-    public String getSessionIdKey() {
+  /*  public String getSessionIdKey() {
         return sessionIdKey;
     }
 
     public void setSessionIdKey(String sessionIdKey) {
         this.sessionIdKey = sessionIdKey;
-    }
+    }*/
 
     public String getDomain() {
         return domain;
@@ -91,5 +92,13 @@ public class GlobalSessionFilterSettings {
     public void setHttpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;
     }
+
+	public String getCookieNameKey() {
+		return cookieNameKey;
+	}
+
+	public void setCookieNameKey(String cookieNameKey) {
+		this.cookieNameKey = cookieNameKey;
+	}
 
 }
