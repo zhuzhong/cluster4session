@@ -1,5 +1,7 @@
 # cluster4session
 
+这个项目不再维护，建议直接使用spring session 
+
 ## 功能简介
 
 利用redis进行session的集中存储，以实现应用的无状态化。
